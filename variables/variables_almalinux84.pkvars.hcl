@@ -3,6 +3,7 @@ iso_url = "D:\\Users\\Public\\Downloads\\ISO\\AlmaLinux-8.4-x86_64-dvd.iso"
 iso_checksum_type = "sha256"
 iso_checksum = "4dd2f7c558bfa34d9a5e71d5add2c77c59fdec58076678a381d9dfd0f9583a51"
 vm_name = "packer-almalinux84-g2"
+configuration_version="8.0"
 disk_size = "70000"
 disk_additional_size = ["150000"]
 switch_name = "Internal Switch"

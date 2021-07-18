@@ -80,6 +80,11 @@ variable "vm_name" {
   default = ""
 }
 
+variable "configuration_version" {
+  type    = string
+  default = ""
+}
+
 source "hyperv-iso" "vm" {
   boot_command          = ["${var.boot_command}"]
   boot_wait             = "5s"
@@ -90,6 +95,7 @@ source "hyperv-iso" "vm" {
   enable_dynamic_memory = "true"
   enable_secure_boot    = false
   generation            = 2
+  configuration_version = "${var.configuration_version}"
   guest_additions_mode  = "disable"
   http_directory        = "./extra/files"
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
