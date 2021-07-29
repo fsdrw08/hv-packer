@@ -32,8 +32,11 @@ fi
 echo "Found os: $OS"
 
 function install_ansible {
+  echo "python3 -m pip install --upgrade pip"
   /usr/bin/python3 -m pip install --upgrade pip
+  echo "python3 -m pip install --upgrade others.."
   /usr/bin/python3 -m pip install --upgrade jmespath jsonlint yamllint ansible-base ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp
+  echo "ansible-galaxy collection install"
   /usr/local/bin/ansible-galaxy collection install ansible.posix
   /usr/local/bin/ansible-galaxy collection install community.general
   /usr/local/bin/ansible-galaxy collection install community.crypto

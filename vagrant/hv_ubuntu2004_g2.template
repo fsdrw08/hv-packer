@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
 
     # Admin user name and password
      config.ssh.username = "vagrant"
-     config.ssh.password = "vagrant"
+    # config.ssh.password = "vagrant"
      config.vm.guest = :ubuntu
 
 #    config.vm.provider "hyperv" do |h|
