@@ -147,6 +147,7 @@ build {
   }
 
   provisioner "ansible-local" {
+    command         = "ANSIBLE_LOCAL_TEMP=/tmp/.ansible/tmp ANSIBLE_REMOTE_TMP=/tmp/.ansible/tmp RCE_COLOR=1 PYTHONUNBUFFERED=1 ansible-playbook"
     extra_arguments = ["-e", "@/tmp/variables.yml", "-e", "@/tmp/override.yml"]
     playbook_file   = "extra/playbooks/provision_ubuntu.yaml"
   }

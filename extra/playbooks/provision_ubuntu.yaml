@@ -56,8 +56,6 @@
           - "Extra volume name              :{{ extra_device }}"
           - "Extra volume prepare           :{{ docker_prepare }}"
           - "Install Cockpit                :{{ install_cockpit }}"
-          - "Install EPEL                   :{{ install_epel }}"
-          - "Install extra groups           :{{ install_extra_groups }}"
           - "Install Hyperv                 :{{ install_hyperv }}"
           - "Install MOTD                   :{{ install_motd }}"
           - "Install Neofetch               :{{ install_neofetch }}"
@@ -110,6 +108,12 @@
       delay: "{{ delay_time }}"
       register: r_set_linux_policy
       when: selinux.state is defined
+    # set appmor policy
+    - name: set_AppArmor_policy
+      ansible.builtin.service:
+        name: apparmor
+        state: stopped
+        
     # start webmin block
     - block:
         - name: add_webmin_repository
@@ -117,15 +121,16 @@
             repo: "{{ item.repo }}"
             filename: "{{ item.filename }}"
             state: present
-          ansible.builtin.apt_key:
-            url: "{{ item.gpgkey }}"
-            state: present
           register: r_webmin_repository
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           loop: "{{ webmin }}"
           until: r_webmin_repository is success
           notify: makecache
+        - name: add_webmin_repository_key
+          ansible.builtin.apt_key:
+            url: "http://www.webmin.com/jcameron-key.asc"
+            state: present
         - name: add_webmin_package
           ansible.builtin.package:
             name: webmin

@@ -69,11 +69,16 @@ fi
 if [ "$INSTALL" == "true" ] && [[ "$OS" =~ debian|ubuntu ]];then
   echo "Installing ansible on Ubuntu/Debian"
   apt-get clean all -y
+  sudo add-apt-repository ppa:ansible/ansible-2.10
   apt-get update -y
   apt-get purge ansible ansible-base -y||true
-  apt-get install python3 python3-dev python3-pip python3-wheel libkrb5-dev -y
+  # apt-get install python3 python3-dev python3-pip python3-wheel libkrb5-dev -y
   apt-get install cowsay -y
-  install_ansible
+  apt-get install ansible -y
+  # install_ansible
+  ansible-galaxy collection install ansible.posix
+  ansible-galaxy collection install community.general
+  ansible-galaxy collection install community.crypto
 fi
 
 if [ "$INSTALL" == "false" ] && [[ "$OS" =~ debian|ubuntu ]];then
