@@ -45,6 +45,8 @@ extra_packages:
   - rkhunter
 selinux:
   state: disabled
+apparmor:
+  state: stopped
 webmin:
   - file: webmin
     gpgkey: http://www.webmin.com/jcameron-key.asc

@@ -112,8 +112,8 @@
     - name: set_AppArmor_policy
       ansible.builtin.service:
         name: apparmor
-        state: stopped
-        
+        state: "{{ apparmor.state }}"
+      when: apparmor.state is defined
     # start webmin block
     - block:
         - name: add_webmin_repository
