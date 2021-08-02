@@ -46,7 +46,7 @@
       ansible.builtin.user:
         name: "{{ vagrant_username }}"
         shell: /bin/bash
-        groups: wheel, root
+        groups: wheel,root
         group: "{{ vagrant_username }}"
         password: "{{ vagrant_password |password_hash('sha512')}}"
         home: "{{ vagrant_home }}"

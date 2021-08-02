@@ -43,8 +43,8 @@ extra_packages:
   - nmon
   - pv
   - rkhunter
-selinux:
-  state: disabled
+# selinux:
+#   state: disabled
 apparmor:
   state: stopped
 webmin:
@@ -59,10 +59,10 @@ zabbix:
   repository:
     - url: https://repo.zabbix.com/zabbix/5.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_5.0-1%2Bfocal_all.deb
       name: zabbix-agent2
-  priorities:
-    - name: zabbix
-      priority: 20
-      path: /etc/yum.repos.d/zabbix.repo
+  # priorities:
+  #   - name: zabbix
+  #     priority: 20
+  #     path: /etc/yum.repos.d/zabbix.repo
   package:
       service: zabbix-agent2
 # puppet:

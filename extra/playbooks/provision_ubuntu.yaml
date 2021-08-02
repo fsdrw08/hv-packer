@@ -74,7 +74,7 @@
     - name: install_initial_packages
       ansible.builtin.package:
         name: "{{ item }}"
-        state: latest
+        state: present
       loop: "{{ initial_packages }}"
       retries: "{{ retries_count }}"
       delay: "{{ delay_time }}"
@@ -134,7 +134,7 @@
         - name: add_webmin_package
           ansible.builtin.package:
             name: webmin
-            state: latest
+            state: present
           register: r_webmin_package
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
@@ -159,8 +159,8 @@
         #     - clean-metadata
         #     - makecache
         - name: install_zabbix_repository
-          ansible.builtin.package:
-            name: "{{ item.url }}"
+          ansible.builtin.apt:
+            deb: "{{ item.url }}"
             state: present
           loop: "{{ zabbix.repository }}"
           retries: "{{ retries_count }}"
@@ -195,9 +195,9 @@
         #   until: r_change_zabbix_priority is success
         #   notify: makecache
         - name: install_zabbix_agent_package
-          ansible.builtin.package:
+          ansible.builtin.apt:
             name: "{{ item.name }}"
-            state: latest
+            state: present
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_zabbix_package
@@ -234,7 +234,7 @@
         - name: install_cockpit
           ansible.builtin.package:
             name: cockpit
-            state: latest
+            state: present
         - name: set_cockpit_service_to_start
           ansible.builtin.systemd:
             name: cockpit.socket
@@ -282,7 +282,7 @@
     #     - name: install_puppet_package
     #       yum:
     #         name: "{{ puppet.package.name }}"
-    #         state: latest
+    #         state: present
     #       retries: "{{ retries_count }}"
     #       delay: "{{ delay_time }}"
     #       register: r_install_puppet_package
@@ -339,15 +339,15 @@
         - name: install_nefoetch
           ansible.builtin.package:
             name: "{{ neofetch.package.name }}"
-            state: latest
+            state: present
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_install_neofetch_package
           until: r_install_neofetch_package is success
-          when: r_neofetch_repository is success
+          # when: r_neofetch_repository is success
         - name: neofetch_first_run
           command: neofetch
-          when: r_neofetch_repository is success
+          # when: r_neofetch_repository is success
           changed_when: false
           ignore_errors: true
           any_errors_fatal: false
@@ -360,7 +360,7 @@
           delay: "{{ delay_time }}"
           register: r_create_config_folder
           until: r_create_config_folder is success
-          when: r_neofetch_repository is success
+          # when: r_neofetch_repository is success
         - name: copy_config_to_etc
           ansible.builtin.copy:
             src: /root/.config/neofetch/config.conf
@@ -401,7 +401,7 @@
         - name: install_hyperv
           ansible.builtin.package:
             name:  linux-cloud-tools-virtual
-            state: latest
+            state: present
           register: r_install_hyperv_package
           until: r_install_hyperv_package is success
         - name: enable_hyperv_services
@@ -453,7 +453,7 @@
         - name: update_all_packages
           ansible.builtin.package:
             name: "*"
-            state: latest
+            state: present
             update_cache: true
           when: install_updates
           register: r_initial_updates

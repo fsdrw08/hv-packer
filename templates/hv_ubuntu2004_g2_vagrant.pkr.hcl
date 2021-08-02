@@ -153,6 +153,7 @@ build {
   }
 
   provisioner "ansible-local" {
+    command       = "ANSIBLE_LOCAL_TEMP=/tmp/.ansible/tmp ANSIBLE_REMOTE_TMP=/tmp/.ansible/tmp RCE_COLOR=1 PYTHONUNBUFFERED=1 ansible-playbook"
     playbook_file = "extra/playbooks/provision_vagrant.yaml"
   }
 
