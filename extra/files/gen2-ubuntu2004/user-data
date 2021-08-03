@@ -30,6 +30,7 @@ autoinstall:
         uri: "http://archive.ubuntu.com/ubuntu/"
   packages:
     - mc
+    - pv
     - curl
     - wget
     - tar

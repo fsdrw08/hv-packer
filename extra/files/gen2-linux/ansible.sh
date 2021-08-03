@@ -86,6 +86,8 @@ if [ "$INSTALL" == "false" ] && [[ "$OS" =~ debian|ubuntu ]];then
   apt-get clean all -y
   apt-get update -y
   /usr/bin/python3 -m pip uninstall  jmespath jsonlint yamllint ansible-base ansible pywinrm requests-kerberos requests-ntlm requests-credssp pypsrp -y
+  apt-get purge ansible -y
+  apt-get autoremove ansible -y
   rm -rfv /root/.ansible||true
   rm -rfv /root/.cache||true
   rm -rfv /home/vagrant/.ansible||true

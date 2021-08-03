@@ -1,9 +1,9 @@
-install_webmin:                true
+install_webmin:                false
 install_hyperv:                false
 install_zabbix:                true
-install_zabbix_as_root:        false
-install_cockpit:               false
-install_puppet:                false
+install_zabbix_as_root:        true
+install_cockpit:               true
+install_puppet:                true
 install_kubernetes_workaround: false
 remove_puppet_ssl_keys:        false
 install_neofetch:              true

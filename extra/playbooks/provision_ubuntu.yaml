@@ -116,6 +116,15 @@
       when: apparmor.state is defined
     # start webmin block
     - block:
+        - name: add_webmin_repository_key
+          ansible.builtin.apt_key:
+            url: "http://www.webmin.com/jcameron-key.asc"
+            state: present
+          register: r_webmin_repository_key
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          loop: "{{ webmin }}"
+          until: r_webmin_repository_key is success
         - name: add_webmin_repository
           ansible.builtin.apt_repository:
             repo: "{{ item.repo }}"
@@ -127,10 +136,7 @@
           loop: "{{ webmin }}"
           until: r_webmin_repository is success
           notify: makecache
-        - name: add_webmin_repository_key
-          ansible.builtin.apt_key:
-            url: "http://www.webmin.com/jcameron-key.asc"
-            state: present
+          when: r_webmin_repository_key is success
         - name: add_webmin_package
           ansible.builtin.package:
             name: webmin
@@ -198,6 +204,7 @@
           ansible.builtin.apt:
             name: "{{ item.name }}"
             state: present
+            update_cache: yes
           retries: "{{ retries_count }}"
           delay: "{{ delay_time }}"
           register: r_zabbix_package
@@ -246,25 +253,25 @@
           until: r_start_cockpit is success
       when: install_cockpit is defined and install_cockpit
     # start puppet block
-    # - block:
-    #     - name: import_gpg_puppet_key
-    #       ansible.builtin.rpm_key:
-    #         key: "{{ item.gpgkey }}"
-    #         state: present
-    #       loop: "{{ puppet.repository }}"
-    #       notify:
-    #         - clean-metadata
-    #         - makecache
-    #     - name: install_puppet_repository
-    #       yum:
-    #         name: "{{ item.url }}"
-    #         state: present
-    #       loop: "{{ puppet.repository }}"
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       register: r_puppet_repository
-    #       notify: makecache
-    #       until: r_puppet_repository is success
+    - block:
+        # - name: import_gpg_puppet_key
+        #   ansible.builtin.rpm_key:
+        #     key: "{{ item.gpgkey }}"
+        #     state: present
+        #   loop: "{{ puppet.repository }}"
+        #   notify:
+        #     - clean-metadata
+        #     - makecache
+        - name: install_puppet_repository
+          ansible.builtin.apt:
+            name: "{{ item.url }}"
+            state: present
+          loop: "{{ puppet.repository }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_puppet_repository
+          notify: makecache
+          until: r_puppet_repository is success
     #     - name: puppet_repository_priority
     #       community.general.ini_file:
     #         path: "{{ item.path }}"
@@ -279,61 +286,62 @@
     #       loop: "{{ puppet.priorities }}"
     #       until: r_puppet_repository_priority is success
     #       notify: makecache
-    #     - name: install_puppet_package
-    #       yum:
-    #         name: "{{ puppet.package.name }}"
-    #         state: present
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       register: r_install_puppet_package
-    #       until: r_install_puppet_package is success
-    #     - name: set_puppet_service_state
-    #       systemd:
-    #         name: "{{ item.name }}"
-    #         state: "{{ item.state }}"
-    #         enabled: "{{ item.enabled }}"
-    #       loop: "{{ puppet.service }}"
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       register: r_set_puppet_service
-    #       until: r_set_puppet_service is success
-    #       when: r_install_puppet_package is success
-    #     - name: remove_temp_ssl_keys
-    #       file:
-    #         path: /etc/puppetlabs/puppet/ssl
-    #         state: absent
-    #       register: r_remove_temp_ssl_keys
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       until: r_remove_temp_ssl_keys is success
-    #       when: r_install_puppet_package is success and remove_puppet_ssl_keys
-    #     - name: create_puppet_config
-    #       file:
-    #         path: "{{ puppet.config.location }}"
-    #         state: touch
-    #         mode: "{{ puppet.config.mode }}"
-    #         modification_time: preserve
-    #         access_time: preserve
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       register: r_create_puppet_config
-    #       until: r_create_puppet_config is success
-    #       when: r_install_puppet_package is success
-    #     - name: add_puppet_config_options
-    #       community.general.ini_file:
-    #         path: "{{ puppet.config.location }}"
-    #         state: present
-    #         section: main
-    #         option: "{{ item.key }}"
-    #         value: "{{ item.value }}"
-    #         mode: 0644
-    #       loop: "{{ puppet.config.agent }}"
-    #       register: r_add_puppet_config_options
-    #       retries: "{{ retries_count }}"
-    #       delay: "{{ delay_time }}"
-    #       until: r_add_puppet_config_options is success
-    #       when: r_install_puppet_package is success
-    #   when: install_puppet == true
+        - name: install_puppet_package
+          ansible.builtin.apt:
+            name: "{{ puppet.package.name }}"
+            state: present
+            update_cache: yes
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_install_puppet_package
+          until: r_install_puppet_package is success
+        - name: set_puppet_service_state
+          ansible.builtin.systemd:
+            name: "{{ item.name }}"
+            state: "{{ item.state }}"
+            enabled: "{{ item.enabled }}"
+          loop: "{{ puppet.service }}"
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          register: r_set_puppet_service
+          until: r_set_puppet_service is success
+          when: r_install_puppet_package is success
+        - name: remove_temp_ssl_keys
+          file:
+            path: /etc/puppetlabs/puppet/ssl
+            state: absent
+          register: r_remove_temp_ssl_keys
+          retries: "{{ retries_count }}"
+          delay: "{{ delay_time }}"
+          until: r_remove_temp_ssl_keys is success
+          when: r_install_puppet_package is success and remove_puppet_ssl_keys
+        # - name: create_puppet_config
+        #   file:
+        #     path: "{{ puppet.config.location }}"
+        #     state: touch
+        #     mode: "{{ puppet.config.mode }}"
+        #     modification_time: preserve
+        #     access_time: preserve
+        #   retries: "{{ retries_count }}"
+        #   delay: "{{ delay_time }}"
+        #   register: r_create_puppet_config
+        #   until: r_create_puppet_config is success
+        #   when: r_install_puppet_package is success
+        # - name: add_puppet_config_options
+        #   community.general.ini_file:
+        #     path: "{{ puppet.config.location }}"
+        #     state: present
+        #     section: main
+        #     option: "{{ item.key }}"
+        #     value: "{{ item.value }}"
+        #     mode: 0644
+        #   loop: "{{ puppet.config.agent }}"
+        #   register: r_add_puppet_config_options
+        #   retries: "{{ retries_count }}"
+        #   delay: "{{ delay_time }}"
+        #   until: r_add_puppet_config_options is success
+        #   when: r_install_puppet_package is success
+      when: install_puppet == true
     # start neofetch block - requires changes from script to 'per option' settings
     - block:
         - name: install_nefoetch

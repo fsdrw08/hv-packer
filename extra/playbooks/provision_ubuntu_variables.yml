@@ -65,20 +65,20 @@ zabbix:
   #     path: /etc/yum.repos.d/zabbix.repo
   package:
       service: zabbix-agent2
-# puppet:
-#   repository:
-#     - url: https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
+puppet:
+  repository:
+    - url: https://apt.puppet.com/puppet-release-focal.deb
 #       gpgkey: https://yum.puppet.com/RPM-GPG-KEY-puppet-20250406
-#   service:
-#     - name: puppet
-#       state: stopped
-#       enabled: no
+  service:
+    - name: puppet
+      state: stopped
+      enabled: no
 #   priorities:
 #     - name: puppet6
 #       priority: 20
 #       path: /etc/yum.repos.d/puppet6.repo
-#   package:
-#     name: puppet-agent
+  package:
+    name: puppet-agent
 #   config:
 #     location: /etc/puppetlabs/puppet/puppet.conf
 #     mode: "0644"

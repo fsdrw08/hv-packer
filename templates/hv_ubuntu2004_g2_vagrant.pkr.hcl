@@ -163,10 +163,6 @@ build {
     inline_shebang  = "/bin/sh -x"
   }
 
-  provisioner "file" {
-    destination = "/usr/local/bin/uefi.sh"
-    source      = "extra/files/gen2-ubuntu2004/uefi.sh"
-  }
 
   provisioner "file" {
     destination = "/tmp/scvmmguestagent.1.0.3.1028.x64.tar"
@@ -174,15 +170,21 @@ build {
   }
 
   provisioner "file" {
-    destination = "/tmp/install"
-    source      = "extra/files/scagent/1.0.3.1028/install"
+    destination = "/tmp/install.sh"
+    source      = "extra/files/scagent/1.0.3.1028/install.sh"
   }
 
   provisioner "shell" {
     execute_command   = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
     expect_disconnect = true
-    inline            = ["chmod +x /tmp/install", "sh /tmp/install \"$(ls /tmp/scvmm*.x64.tar)\"", "reboot"]
+    inline            = ["chmod +x /tmp/install.sh", "sh /tmp/install.sh \"$(ls /tmp/scvmm*.x64.tar)\"", "reboot"]
     inline_shebang    = "/bin/sh -x"
+  }
+
+  provisioner "file" {
+    // destination = "/usr/local/bin/uefi.sh"
+    destination = "/tmp/uefi.sh"
+    source      = "extra/files/gen2-ubuntu2004/uefi.sh"
   }
 
   provisioner "file" {
@@ -192,7 +194,7 @@ build {
 
   provisioner "shell" {
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
-    inline          = ["echo Last Phase", "chmod +x /usr/local/bin/uefi.sh", "systemctl set-default multi-user.target", "/bin/rm -f /etc/ssh/*key*", "chmod +x /tmp/zeroing.sh", "/tmp/zeroing.sh", "/bin/rm -rfv /tmp/*"]
+    inline          = ["echo Last Phase", "chmod +x /tmp/uefi.sh", "systemctl set-default multi-user.target", "/bin/rm -f /etc/ssh/*key*", "chmod +x /tmp/zeroing.sh", "/tmp/zeroing.sh", "/bin/rm -rfv /tmp/*"]
     inline_shebang  = "/bin/sh -x"
     pause_before    = "30s"
   }
