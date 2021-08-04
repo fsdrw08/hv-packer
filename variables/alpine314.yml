@@ -1,0 +1,14 @@
+install_webmin:                false
+install_hyperv:                false
+install_zabbix:                true
+install_zabbix_as_root:        true
+install_cockpit:               false
+install_puppet:                false
+install_kubernetes_workaround: false
+remove_puppet_ssl_keys:        false
+install_neofetch:              true
+install_updates:               true
+docker_prepare:                false
+extra_device:                  ""
+install_motd:                  false
+

@@ -66,6 +66,18 @@
       register: r_create_vagrant_user
       until: r_create_vagrant_user is success
       when: (ansible_facts['distribution'] == "Ubuntu") and (vagrant_home is defined and vagrant_username is defined and vagrant_password is defined) and (r_create_vagrant_group is success and r_create_vagrant_group is defined)
+    - name: alpine_create_vagrant_user
+      ansible.builtin.user:
+        name: "{{ vagrant_username }}"
+        shell: /bin/bash
+        groups: wheel
+        group: "{{ vagrant_username }}"
+        password: "{{ vagrant_password |password_hash('sha512')}}"
+        home: "{{ vagrant_home }}"
+        update_password: on_create
+      register: r_create_vagrant_user
+      until: r_create_vagrant_user is success
+      when: (ansible_facts['os_family'] == "alpine") and (vagrant_home is defined and vagrant_username is defined and vagrant_password is defined) and (r_create_vagrant_group is success and r_create_vagrant_group is defined)
     - name: create_ssh_folder
       ansible.builtin.file:
         state: directory

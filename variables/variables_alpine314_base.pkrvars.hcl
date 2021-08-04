@@ -1,0 +1,29 @@
+#iso_url="https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.0-x86_64.iso"
+#iso_url="../ISO/alpine-standard-3.14.0-x86_64.iso"
+iso_url="../ISO/alpine-virt-3.14.0-x86_64.iso"
+iso_checksum_type="sha256"
+#iso_checksum="4bf69f1d96384bd88574e6c64583f40d3c6ae07af4c96772900492ba0f0b9126"
+iso_checksum="d568c6c71bb1eee0f65cdf40088daf57032e24f1e3bd2cf8a813f80d2e9e4eab"
+vm_name="packer-alpine314-g2"
+configuration_version="8.0"
+disk_size="70000"
+switch_name="Internal Switch"
+output_directory="output-alpine314-base"
+output_vagrant="../vbox/packer-alpine314-base-hv-g2.box"
+vlan_id=""
+vagrantfile_template="./vagrant/hv_alpine314_g2.template"
+alpine_version="3.14"
+mirror="https://mirrors.ustc.edu.cn/alpine/"
+boot_command=["root<enter><wait>",
+    "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
+    "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
+    "setup-alpine -f answers<enter><wait5>",
+    "vagrant<enter><wait>",
+    "vagrant<enter><wait30>",
+    "<wait>y<enter><wait30>",
+    "rc-service sshd stop<enter>",
+    "mount /dev/sda3 /mnt<enter>",
+    "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
+    "umount /mnt<enter>",
+    "reboot<enter>"
+]
