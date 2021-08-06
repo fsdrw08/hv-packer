@@ -11,19 +11,29 @@ switch_name="Internal Switch"
 output_directory="output-alpine314-base"
 output_vagrant="../vbox/packer-alpine314-base-hv-g2.box"
 vlan_id=""
-vagrantfile_template="./vagrant/hv_alpine314_g2.template"
+vagrantfile_template="./vagrant/hv_alpine_g2.template"
 alpine_version="3.14"
-mirror="https://mirrors.ustc.edu.cn/alpine/"
+mirror="https://mirrors.tuna.tsinghua.edu.cn/alpine/"
 boot_command=["root<enter><wait>",
     "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
     "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
     "setup-alpine -f answers<enter><wait5>",
-    "vagrant<enter><wait>",
-    "vagrant<enter><wait30>",
-    "<wait>y<enter><wait30>",
+    "root<enter><wait>",
+    "root<enter><wait20>",
+    "y<enter><wait40>",
     "rc-service sshd stop<enter>",
     "mount /dev/sda3 /mnt<enter>",
     "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
     "umount /mnt<enter>",
-    "reboot<enter>"
+    "reboot<enter><wait20>",
+    "root<enter>",
+    "root<enter><wait5>",
+    "apk add hvtools<enter><wait10>",
+    "rc-update add hv_fcopy_daemon<enter><wait>",
+    "rc-update add hv_kvp_daemon<enter><wait>",
+    "rc-update add hv_vss_daemon<enter><wait>",
+    "rc-service hv_fcopy_daemon start<enter><wait>",
+    "rc-service hv_kvp_daemon start<enter><wait>",
+    "rc-service hv_vss_daemon start<enter><wait>",
+    "exit<enter>"
 ]

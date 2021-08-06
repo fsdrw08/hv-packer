@@ -25,7 +25,9 @@ TIMEZONEOPTS="-z PRC"
 PROXYOPTS="none"
 
 # Add first mirror
-APKREPOSOPTS="https://mirror.lzu.edu.cn/alpine/v3.14/main/"
+APKREPOSOPTS="https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.14/main/
+https://mirrors.tuna.tsinghua.edu.cn/alpine/v3.14/community
+https://mirrors.tuna.tsinghua.edu.cn/alpine/edge/testing"
 
 # Install Openssh
 SSHDOPTS="-c openssh"

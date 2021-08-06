@@ -115,14 +115,14 @@ source "hyperv-iso" "vm" {
   ]
   generation            = 2
   guest_additions_mode  = "disable"
-  http_directory        = "./extra/files/gen2-alpine314"
+  http_directory        = "./extra/files/gen2-alpine"
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
   memory                = "${var.memory}"
   output_directory      = "${var.output_directory}"
-  shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
+  shutdown_command      = "poweroff"
   shutdown_timeout      = "30m"
-  ssh_password          = "vagrant"
+  ssh_password          = "root"
   ssh_timeout           = "4h"
   ssh_username          = "root"
   switch_name           = "${var.switch_name}"
@@ -135,14 +135,18 @@ build {
   sources = ["source.hyperv-iso.vm"]
 
   provisioner "shell" {
+      // "echo ${var.mirror}v${var.alpine_version}/community >> /etc/apk/repositories",
+      // "echo ${var.mirror}edge/testing >> /etc/apk/repositories",
     inline          = [
-      "echo ${var.mirror}v${var.alpine_version}/community >> /etc/apk/repositories",
       "apk update",
       "apk add sudo",
       "echo '%wheel ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/wheel",
       "user=${var.ssh_username}",
+      "group=${var.ssh_username}",
+      "echo Add group $group for user $user",
+      "addgroup $group",
       "echo Add user $user with NOPASSWD sudo",
-      "adduser $user --disabled-password",
+      "adduser $user --ingroup $group --disabled-password",
       "echo '${var.ssh_username}:${var.ssh_password}' | chpasswd",
       "adduser $user wheel",
       "echo add ssh key",
@@ -151,6 +155,8 @@ build {
       "chmod 700 .ssh",
       "echo ${var.ssh_key} > .ssh/authorized_keys",
       "chown -R $user .ssh",
+      "echo install rsync",
+      "apk add rsync",
       "echo disable ssh root login",
       "sed '/PermitRootLogin yes/d' -i /etc/ssh/sshd_config"
     ]
@@ -159,6 +165,6 @@ build {
   post-processor "vagrant" {
     keep_input_artifact  = true
     output               = "${var.output_vagrant}"
-    // vagrantfile_template = "${var.vagrantfile_template}"
+    vagrantfile_template = "${var.vagrantfile_template}"
   }
 }
