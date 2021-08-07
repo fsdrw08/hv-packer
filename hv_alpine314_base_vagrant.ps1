@@ -13,7 +13,8 @@ dos2unix
 if ($Ready -ne $false) {
   # Convert dos format to unix format
   "dos2unix"
-  Get-ChildItem -Path $PSScriptRoot -Recurse -Filter "*.sh" `
+  Get-ChildItem -Path $PSScriptRoot -Recurse `
+    | Where-Object {$_.Name -like "*.sh" -or $_.Name -eq "answers"} `
     | Select-Object -ExpandProperty VersionInfo `
     | Select-Object -ExpandProperty filename `
     | ForEach-Object {
