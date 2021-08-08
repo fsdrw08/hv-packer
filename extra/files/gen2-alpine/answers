@@ -32,8 +32,8 @@ https://mirrors.tuna.tsinghua.edu.cn/alpine/edge/testing"
 # Install Openssh
 SSHDOPTS="-c openssh"
 
-# Use openntpd
-NTPOPTS="-c openntpd"
+# Use chrony
+NTPOPTS="-c chrony"
 
 # Use /dev/sda as a system disk
 DISKOPTS="-m sys /dev/sda"
