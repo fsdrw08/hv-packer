@@ -1,4 +1,4 @@
-#iso_url="https://gemmei.ftp.acc.umu.se/debian-cd/current-live/amd64/iso-hybrid/debian-live-11.0.0-amd64-standard.iso"
+#iso_url="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.0.0-amd64-netinst.iso"
 iso_url="../ISO/debian-11.0.0-amd64-netinst.iso"
 iso_checksum_type="sha256"
 iso_checksum="ae6d563d2444665316901fe7091059ac34b8f67ba30f9159f7cef7d2fdc5bf8a"
@@ -16,7 +16,7 @@ boot_command=[
   "linux /install.amd/vmlinuz",
   " auto=true",
   " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
-  " hostname=vagrant-debian11",
+  " hostname=debian11",
   " domain=lab",
   "<enter>",
   "initrd /install.amd/initrd.gz<enter>",
