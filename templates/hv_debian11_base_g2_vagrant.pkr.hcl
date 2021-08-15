@@ -129,19 +129,6 @@ build {
   provisioner "shell" {
     execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
     scripts         = [
-      "./extra/files/gen2-debian10/setup.sh"
-    ]
-  }
-
-  provisioner "ansible-local" {
-    extra_arguments = ["-e", "@/tmp/variables.yml", "-e", "@/tmp/override.yml"]
-    playbook_file   = "extra/playbooks/provision_debian.yml"
-    galaxy_file   = "extra/playbooks/requirements_debian.yml"
-  }
-
-  provisioner "shell" {
-    execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-    scripts         = [
       "./extra/files/gen2-debian10/cleanup.sh"
     ]
   }
