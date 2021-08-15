@@ -90,7 +90,7 @@ variable "vm_name" {
 
 source "hyperv-iso" "vm" {
   boot_command          = "${var.boot_command}"
-  boot_wait             = "1s"
+  boot_wait             = "5s"
   communicator          = "ssh"
   configuration_version = "${var.configuration_version}"
   cpus                  = "${var.cpus}"
@@ -100,12 +100,12 @@ source "hyperv-iso" "vm" {
   enable_secure_boot    = false
   generation            = 2
   guest_additions_mode  = "disable"
-  http_directory        = "./extra/files/gen2-debian10-base"
+  http_directory        = "./extra/files/gen2-debian11"
   iso_checksum          = "${var.iso_checksum_type}:${var.iso_checksum}"
   iso_url               = "${var.iso_url}"
   memory                = "${var.memory}"
   output_directory      = "${var.output_directory}"
-  shutdown_command      = "echo 'password' | sudo -S shutdown -P now"
+  shutdown_command      = "echo 'vagrant' | sudo -S shutdown -P now"
   shutdown_timeout      = "30m"
   ssh_password          = "vagrant"
   ssh_timeout           = "4h"
@@ -121,21 +121,19 @@ build {
 
   provisioner "shell" {
     execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-    scripts         = [
-      "./extra/files/gen2-debian10/ansible.sh"
+    inline          = [ 
+      "sudo apt update -y && sudo apt upgrade -y",
+      "sudo apt install ansible -y"
     ]
   }
 
-  provisioner "shell" {
-    execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-    scripts         = [
-      "./extra/files/gen2-debian10/cleanup.sh"
-    ]
+  provisioner "ansible-local" {
+    playbook_file   = "./extra/files/gen2-debian11/setup.yml"
   }
 
   post-processor "vagrant" {
     keep_input_artifact  = true
     output               = "${var.output_vagrant}"
-    // vagrantfile_template = "${var.vagrantfile_template}"
+    vagrantfile_template = "${var.vagrantfile_template}"
   }
 }
