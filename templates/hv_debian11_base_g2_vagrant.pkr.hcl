@@ -131,6 +131,13 @@ build {
     playbook_file   = "./extra/files/gen2-debian11/setup.yml"
   }
 
+  provisioner "shell" {
+    execute_command = "echo 'vagrant' | sudo -S -E sh {{ .Path }}"
+    scripts         = [
+      "./extra/files/gen2-ubuntu2004-base/vagrant.sh", 
+    ]
+  }
+
   post-processor "vagrant" {
     keep_input_artifact  = true
     output               = "${var.output_vagrant}"
