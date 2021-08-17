@@ -119,17 +119,17 @@ source "hyperv-iso" "vm" {
 build {
   sources = ["source.hyperv-iso.vm"]
 
-  provisioner "shell" {
-    execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-    inline          = [ 
-      "sudo apt update -y && sudo apt upgrade -y",
-      "sudo apt install ansible -y"
-    ]
-  }
+  // provisioner "shell" {
+  //   execute_command = "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  //   inline          = [ 
+  //     "sudo apt update -y && sudo apt upgrade -y",
+  //     "sudo apt install ansible -y"
+  //   ]
+  // }
 
-  provisioner "ansible-local" {
-    playbook_file   = "./extra/files/gen2-debian11/setup.yml"
-  }
+  // provisioner "ansible-local" {
+  //   playbook_file   = "./extra/files/gen2-debian11/setup.yml"
+  // }
 
   provisioner "shell" {
     execute_command = "echo 'vagrant' | sudo -S -E sh {{ .Path }}"
