@@ -158,7 +158,8 @@ build {
       "echo install rsync",
       "apk add rsync",
       "echo disable ssh root login",
-      "sed '/PermitRootLogin yes/d' -i /etc/ssh/sshd_config"
+      "sed '/PermitRootLogin yes/d' -i /etc/ssh/sshd_config",
+      "sudo sed -n '1w /etc/dhcp/dhclient.conf' /etc/dhcp/dhclient.conf.example"
     ]
   }
 

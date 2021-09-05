@@ -1,9 +1,9 @@
-#iso_url="https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.1-x86_64.iso"
+#iso_url="https://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.2-x86_64.iso"
 #iso_url="../ISO/alpine-standard-3.14.0-x86_64.iso"
-iso_url="../ISO/alpine-virt-3.14.1-x86_64.iso"
+iso_url="../ISO/alpine-virt-3.14.2-x86_64.iso"
 iso_checksum_type="sha256"
 #iso_checksum="4bf69f1d96384bd88574e6c64583f40d3c6ae07af4c96772900492ba0f0b9126"
-iso_checksum="b9269006e9532c6916895a6427719db68751a0c8e4cd10a2cdb62a34e870ff00"
+iso_checksum="FCBA6ECC8419DA955D326A12B2F6D9D8F885A420A1112E0CF1910914C4C814A7"
 vm_name="packer-alpine314-g2"
 configuration_version="8.0"
 disk_size="70000"
@@ -25,10 +25,10 @@ boot_command=["root<enter><wait>",
     "mount /dev/sda3 /mnt<enter>",
     "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
     "umount /mnt<enter>",
-    "reboot<enter><wait20>",
+    "reboot<enter><wait15>",
     "root<enter>",
     "root<enter><wait5>",
-    "apk add hvtools<enter><wait10>",
+    "apk add hvtools dhclient<enter><wait10>",
     "rc-update add hv_fcopy_daemon<enter><wait>",
     "rc-update add hv_kvp_daemon<enter><wait>",
     "rc-update add hv_vss_daemon<enter><wait>",

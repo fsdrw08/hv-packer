@@ -11,17 +11,6 @@ dos2unix
 
 # Build images
 if ($Ready -ne $false) {
-  # Convert dos format to unix format
-  "dos2unix"
-  Get-ChildItem -Path $PSScriptRoot -Recurse `
-    | Where-Object {$_.Name -like "*.sh" -or $_.Name -eq "answers"} `
-    | Select-Object -ExpandProperty VersionInfo `
-    | Select-Object -ExpandProperty filename `
-    | ForEach-Object {
-      #[io.file]::WriteAllText($_, ((Get-Content -Raw  $_) -replace "`r`n","`n"))
-      dos2unix $_
-    }
-
   # Get Start Time
   $startDTM = (Get-Date)
   
@@ -45,6 +34,17 @@ if ($Ready -ne $false) {
       exit (-1)
     }
     try {
+      # Convert dos format to unix format
+      "dos2unix"
+      Get-ChildItem -Path $PSScriptRoot -Recurse `
+        | Where-Object {$_.Name -like "*.sh" -or $_.Name -eq "answers"} `
+        | Select-Object -ExpandProperty VersionInfo `
+        | Select-Object -ExpandProperty filename `
+        | ForEach-Object {
+          #[io.file]::WriteAllText($_, ((Get-Content -Raw  $_) -replace "`r`n","`n"))
+          dos2unix $_
+        }
+      
       $env:PACKER_LOG=$packer_log
       packer version
       packer build --force -var-file="$var_file" "$template_file"
