@@ -7,9 +7,9 @@ variable "alpine_version" {
   type    = string
 }
 
-variable "boot_command" {
-  type    = list(string)
-}
+// variable "boot_command" {
+//   type    = list(string)
+// }
 
 variable "configuration_version" {
   type    = string
@@ -100,7 +100,29 @@ variable "vm_name" {
 }
 
 source "hyperv-iso" "vm" {
-  boot_command          = "${var.boot_command}"
+  boot_command          = ["root<enter><wait>",
+    "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
+    "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers<enter><wait>",
+    "setup-alpine -f answers<enter><wait5>",
+    "root<enter><wait>",
+    "root<enter><wait20>",
+    "y<enter><wait40>",
+    "rc-service sshd stop<enter>",
+    "mount /dev/sda3 /mnt<enter>",
+    "echo 'PermitRootLogin yes' >> /mnt/etc/ssh/sshd_config<enter>",
+    "umount /mnt<enter>",
+    "reboot<enter><wait20>",
+    "root<enter>",
+    "root<enter><wait5>",
+    "apk add hvtools dhclient<enter><wait10>",
+    "rc-update add hv_fcopy_daemon<enter><wait>",
+    "rc-update add hv_kvp_daemon<enter><wait>",
+    "rc-update add hv_vss_daemon<enter><wait>",
+    "rc-service hv_fcopy_daemon start<enter><wait>",
+    "rc-service hv_kvp_daemon start<enter><wait>",
+    "rc-service hv_vss_daemon start<enter><wait>",
+    "exit<enter>"
+  ]
   boot_wait             = "10s"
   communicator          = "ssh"
   configuration_version = "${var.configuration_version}"
@@ -156,10 +178,14 @@ build {
       "echo ${var.ssh_key} > .ssh/authorized_keys",
       "chown -R $user .ssh",
       "echo install rsync",
-      "apk add rsync",
+      "apk add rsync curl",
       "echo disable ssh root login",
       "sed '/PermitRootLogin yes/d' -i /etc/ssh/sshd_config",
-      "sudo sed -n '1w /etc/dhcp/dhclient.conf' /etc/dhcp/dhclient.conf.example"
+      "sudo sed -n '1w /etc/dhcp/dhclient.conf' /etc/dhcp/dhclient.conf.example",
+      "echo -e '#!/bin/ash\nsudo dhclient -r eth0' | sudo tee /etc/local.d/release-ip.stop",
+      "sudo chmod +x /etc/local.d/release-ip.stop",
+      "sudo rc-service local start",
+      "sudo rc-update add local default"
     ]
   }
 
